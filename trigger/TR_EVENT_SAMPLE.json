@@ -1,0 +1,20 @@
+{
+	"name": "TR_EVENT_SAMPLE",
+	"properties": {
+		"annotations": [
+			"TR_SAMPLE_Testing"
+		],
+		"runtimeState": "Stopped",
+		"pipelines": [],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/raw/blobs/MOCK_DATA",
+			"blobPathEndsWith": ".csv",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/f40f180f-6064-493e-a43d-a9acbdf03c30/resourceGroups/rgtraininguks/providers/Microsoft.Storage/storageAccounts/adlstraininggen2",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

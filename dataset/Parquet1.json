@@ -1,0 +1,36 @@
+{
+	"name": "Parquet1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADLS_ADLSTRAINIG",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"PARA_DIRECTORY": {
+				"type": "string"
+			},
+			"PARA_FILENAME": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().PARA_FILENAME",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@concat(dataset().PARA_DIRECTORY, '/' , utcNow('yyyy-MM'), '/', utcNow('dd'))\n",
+					"type": "Expression"
+				},
+				"fileSystem": "generic"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

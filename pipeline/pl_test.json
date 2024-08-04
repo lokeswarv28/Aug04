@@ -1,0 +1,40 @@
+{
+	"name": "pl_test",
+	"properties": {
+		"activities": [
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "testing",
+					"value": {
+						"value": "@pipeline().parameters.para_test",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"para_test": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"testing": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Generic"
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-07-21T09:57:40Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

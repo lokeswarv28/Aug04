@@ -1,0 +1,76 @@
+{
+	"name": "PL_until",
+	"properties": {
+		"activities": [
+			{
+				"name": "Until1",
+				"type": "Until",
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@greater(variables('current_count'), variables('initial_count'))",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Set variable2",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "current_count",
+								"value": {
+									"value": "@pipeline().parameters.para_current_count",
+									"type": "Expression"
+								}
+							}
+						}
+					],
+					"timeout": "0.00:01:00"
+				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "initial_count",
+					"value": 5
+				}
+			}
+		],
+		"parameters": {
+			"para_current_count": {
+				"type": "int"
+			}
+		},
+		"variables": {
+			"initial_count": {
+				"type": "Integer"
+			},
+			"current_count": {
+				"type": "Integer"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-06-02T05:02:29Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

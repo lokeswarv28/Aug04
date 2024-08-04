@@ -1,0 +1,43 @@
+{
+	"name": "DS_AZURESQL_LKP_CONFIG",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_AZURE_SQL_04",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SrcContainer",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SrcFolderName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SrcFileNames",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DestinationContainer",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DestinationFileName",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dev",
+			"table": "TConfigHistoricalLoad"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

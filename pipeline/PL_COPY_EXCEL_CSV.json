@@ -1,0 +1,99 @@
+{
+	"name": "PL_COPY_EXCEL_CSV",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "src//Global Superstore.xls"
+					},
+					{
+						"name": "Destination",
+						"value": "raw/@{pipeline().parameters.pl_para_sheet}/@{concat(pipeline().parameters.pl_para_sheet, '_', utcNow('yyyyMMdd HH:mm'), '.csv')}"
+					},
+					{
+						"name": "demo",
+						"value": "for demo excel to csv"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "ExcelSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_ADLS_sRC_EXCEL",
+						"type": "DatasetReference",
+						"parameters": {
+							"para_sheet": {
+								"value": "@pipeline().parameters.pl_para_sheet",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_ADLS_SINK_EXCEL",
+						"type": "DatasetReference",
+						"parameters": {
+							"para_dir": {
+								"value": "@pipeline().parameters.pl_para_sheet",
+								"type": "Expression"
+							},
+							"para_file": {
+								"value": "@pipeline().parameters.pl_para_sheet",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"pl_para_sheet": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-05-18T06:20:51Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,322 @@
+{
+	"name": "PL_COPY2WHEELS",
+	"properties": {
+		"activities": [
+			{
+				"name": "ACT_GEN_SCRIPT_PIPELINES",
+				"type": "Script",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "ACT_GEN_SET_STARTTIME",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "select * from [dev].[pipelines2] where PipelineName = '@{pipeline().Pipeline}'",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "ACT_GEN_SET_SRCFILENAME",
+				"type": "SetVariable",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "ACT_GEN_SCRIPT_PIPELINES",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "var_Src_filename",
+					"value": {
+						"value": "@json(activity('ACT_GEN_SCRIPT_PIPELINES').output.resultSets[0].rows[0].PipelineParameters).para_filenamesrc",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ACT_GEN_SET_SINKFILENAME",
+				"type": "SetVariable",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "ACT_GEN_SCRIPT_PIPELINES",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "var_Sink_filename",
+					"value": {
+						"value": "@json(activity('ACT_GEN_SCRIPT_PIPELINES').output.resultSets[0].rows[0].PipelineParameters).para_filenamesink",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ACT_MT_COPYCSV",
+				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "Script1",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"value": "@json(activity('Script1').output.resultSets[0].rows[0].json_output)",
+						"type": "Expression"
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_ADLS_SRC_GENERICCSV",
+						"type": "DatasetReference",
+						"parameters": {
+							"para_filename": {
+								"value": "@variables('var_Src_filename')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Parquet1",
+						"type": "DatasetReference",
+						"parameters": {
+							"PARA_DIRECTORY": {
+								"value": "@split(variables('var_Sink_filename'), '.')[0]",
+								"type": "Expression"
+							},
+							"PARA_FILENAME": {
+								"value": "@variables('var_Sink_filename')",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "ACT_GEN_SET_STARTTIME",
+				"type": "SetVariable",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "var_sttime",
+					"value": {
+						"value": "@utcNow()",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ACT_GEN_SPROC_2WHEELS",
+				"type": "SqlServerStoredProcedure",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "ACT_MT_COPYCSV",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dev].[sp_InsertOrUpdateRunActivity]",
+					"storedProcedureParameters": {
+						"ActivityEndTime": {
+							"value": {
+								"value": "@utcNow()",
+								"type": "Expression"
+							},
+							"type": "DateTime"
+						},
+						"ActivityStartTime": {
+							"value": {
+								"value": "@variables('var_sttime')",
+								"type": "Expression"
+							},
+							"type": "DateTime"
+						},
+						"completedstage": {
+							"value": "Raw",
+							"type": "String"
+						},
+						"ErrorMessage": {
+							"value": {
+								"value": "@activity('ACT_MT_COPYCSV').status",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"Fk_PipelineID": {
+							"value": {
+								"value": "@activity('ACT_GEN_SCRIPT_PIPELINES').output.resultSets[0].rows[0].Pk_PipelineID",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						},
+						"pipelineRunId": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"RunDate": {
+							"value": {
+								"value": "@formatDateTime(utcNow(), 'yyyy-MM-dd')",
+								"type": "Expression"
+							},
+							"type": "DateTime"
+						}
+					}
+				}
+			},
+			{
+				"name": "Script1",
+				"type": "Script",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "ACT_GEN_SET_SRCFILENAME",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
+						"activity": "ACT_GEN_SET_SINKFILENAME",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "EXEC [dev].[sp_GetColumnMappingActivity] @ParameterValueSink = '@{variables('var_Src_filename')}'",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"variables": {
+			"var_Src_filename": {
+				"type": "String"
+			},
+			"var_Sink_filename": {
+				"type": "String"
+			},
+			"var_sttime": {
+				"type": "String"
+			},
+			"testing": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Generic/RAW/CSV"
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-08-04T03:15:03Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

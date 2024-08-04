@@ -1,0 +1,238 @@
+{
+	"name": "PL_SALESDATA",
+	"properties": {
+		"activities": [
+			{
+				"name": "ACT_GEN_SET_STARTTIME",
+				"type": "SetVariable",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "var_sttime",
+					"value": {
+						"value": "@utcNow()",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ACT_GEN_SCRIPT_PIPELINES",
+				"type": "Script",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "ACT_GEN_SET_STARTTIME",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "select * from [dev].[pipelines2] where PipelineName = '@{pipeline().Pipeline}'",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "ACT_GEN_SET_SRCTABLE",
+				"type": "SetVariable",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "ACT_GEN_SCRIPT_PIPELINES",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "var_src_table",
+					"value": {
+						"value": "@json(activity('ACT_GEN_SCRIPT_PIPELINES').output.resultSets[0].rows[0].PipelineParameters).para_srctable",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ACT_GEN_SET_SINKTABLE",
+				"type": "SetVariable",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "ACT_GEN_SCRIPT_PIPELINES",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "var_sink_table",
+					"value": {
+						"value": "@json(activity('ACT_GEN_SCRIPT_PIPELINES').output.resultSets[0].rows[0].PipelineParameters).para_sinktable",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ACT_MT_COPYSQL",
+				"type": "Copy",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "ACT_GEN_SET_SRCTABLE",
+						"dependencyConditions": [
+							"Completed"
+						]
+					},
+					{
+						"activity": "ACT_GEN_SET_SINKTABLE",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"enableStaging": false
+				}
+			},
+			{
+				"name": "ACT_GEN_SPROC_SQL",
+				"type": "SqlServerStoredProcedure",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "ACT_MT_COPYSQL",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dev].[sp_InsertOrUpdateRunActivity]",
+					"storedProcedureParameters": {
+						"ActivityEndTime": {
+							"value": {
+								"value": "@utcNow()",
+								"type": "Expression"
+							},
+							"type": "DateTime"
+						},
+						"ActivityStartTime": {
+							"value": {
+								"value": "@variables('var_sttime')",
+								"type": "Expression"
+							},
+							"type": "DateTime"
+						},
+						"completedstage": {
+							"value": "Raw",
+							"type": "String"
+						},
+						"ErrorMessage": {
+							"value": {
+								"value": "@activity('ACT_MT_COPYSQL').status",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"Fk_PipelineID": {
+							"value": {
+								"value": "@activity('ACT_GEN_SCRIPT_PIPELINES').output.resultSets[0].rows[0].Pk_PipelineID",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						},
+						"pipelineRunId": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"RunDate": {
+							"value": {
+								"value": "@formatDateTime(utcNow(), 'yyyy-MM-dd')",
+								"type": "Expression"
+							},
+							"type": "DateTime"
+						}
+					}
+				}
+			}
+		],
+		"variables": {
+			"var_sttime": {
+				"type": "String"
+			},
+			"var_src_table": {
+				"type": "String"
+			},
+			"var_sink_table": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Generic/RAW/SQL"
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-08-04T03:15:03Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

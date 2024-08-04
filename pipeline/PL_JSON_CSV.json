@@ -1,0 +1,197 @@
+{
+	"name": "PL_JSON_CSV",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['id']"
+								},
+								"sink": {
+									"name": "PostId"
+								}
+							},
+							{
+								"source": {
+									"path": "['caption']"
+								},
+								"sink": {
+									"name": "caption"
+								}
+							},
+							{
+								"source": {
+									"path": "['comments_count']"
+								},
+								"sink": {
+									"name": "comments_count"
+								}
+							},
+							{
+								"source": {
+									"path": "['like_count']"
+								},
+								"sink": {
+									"name": "like_count"
+								}
+							},
+							{
+								"source": {
+									"path": "['media_type']"
+								},
+								"sink": {
+									"name": "media_type"
+								}
+							},
+							{
+								"source": {
+									"path": "['media_url']"
+								},
+								"sink": {
+									"name": "media_url"
+								}
+							},
+							{
+								"source": {
+									"path": "['timestamp']"
+								},
+								"sink": {
+									"name": "timestamp"
+								}
+							},
+							{
+								"source": {
+									"path": "$['business_discovery']['name']"
+								},
+								"sink": {
+									"name": "name"
+								}
+							},
+							{
+								"source": {
+									"path": "$['business_discovery']['username']"
+								},
+								"sink": {
+									"name": "username"
+								}
+							},
+							{
+								"source": {
+									"path": "$['business_discovery']['followers_count']"
+								},
+								"sink": {
+									"name": "followers_count"
+								}
+							},
+							{
+								"source": {
+									"path": "$['business_discovery']['media_count']"
+								},
+								"sink": {
+									"name": "media_count"
+								}
+							}
+						],
+						"collectionReference": "$['business_discovery']['media']['data']",
+						"mapComplexValuesToString": true
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Json1",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_ADLS_SINK",
+						"type": "DatasetReference",
+						"parameters": {
+							"ds_para_filename": {
+								"value": "@variables('filename_vara')",
+								"type": "Expression"
+							},
+							"ds_para_dircetory": {
+								"value": "@variables('directory_vara')",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": true,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "New",
+					"value": "Hi hello welcome "
+				}
+			}
+		],
+		"variables": {
+			"filename_vara": {
+				"type": "String"
+			},
+			"directory_vara": {
+				"type": "String"
+			},
+			"New": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-05-19T06:45:36Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

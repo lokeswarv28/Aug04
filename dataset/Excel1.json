@@ -1,0 +1,36 @@
+{
+	"name": "Excel1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADLS_ADLSTRAINIG",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"para_sheetName": {
+				"type": "string"
+			},
+			"para_filename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": {
+				"value": "@dataset().para_sheetName",
+				"type": "Expression"
+			},
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().para_filename",
+					"type": "Expression"
+				},
+				"fileSystem": "src"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

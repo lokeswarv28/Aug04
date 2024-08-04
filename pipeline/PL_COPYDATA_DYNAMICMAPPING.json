@@ -1,0 +1,328 @@
+{
+	"name": "PL_COPYDATA_DYNAMICMAPPING",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "OEM",
+									"type": "Int64",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "OEM",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Model",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Model",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Segment",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Segment",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Month",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Month",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Year",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Year",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "NoOfSales",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "NoOfSales",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "EngineCapacity",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "EngineCapacity",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Mileage",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Mileage",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Model Price",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Model Price",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Dealer location",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Dealer location",
+									"type": "String",
+									"physicalType": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Region",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Region",
+									"type": "String",
+									"physicalType": "String"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_METACOLUMNS_SOURCE",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_METACOLUMNS_SINK",
+						"type": "DatasetReference",
+						"parameters": {
+							"FILENAMEE": "2_wheels_mapping.csv"
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"para_json": {
+				"type": "string",
+				"defaultValue": {
+					"type": "TabularTranslator",
+					"mappings": [
+						{
+							"source": {
+								"name": "OEM",
+								"type": "String",
+								"physicalType": "String"
+							},
+							"sink": {
+								"name": "OEM",
+								"type": "String",
+								"physicalType": "String"
+							}
+						},
+						{
+							"source": {
+								"name": "Month",
+								"type": "String",
+								"physicalType": "String"
+							},
+							"sink": {
+								"name": "Month",
+								"type": "String",
+								"physicalType": "String"
+							}
+						},
+						{
+							"source": {
+								"name": "Year",
+								"type": "String",
+								"physicalType": "String"
+							},
+							"sink": {
+								"name": "Year",
+								"type": "String",
+								"physicalType": "String"
+							}
+						},
+						{
+							"source": {
+								"name": "NoOfSales",
+								"type": "String",
+								"physicalType": "String"
+							},
+							"sink": {
+								"name": "NoOfSales",
+								"type": "String",
+								"physicalType": "String"
+							}
+						},
+						{
+							"source": {
+								"name": "EngineCapacity",
+								"type": "String",
+								"physicalType": "String"
+							},
+							"sink": {
+								"name": "EngineCapacity",
+								"type": "String",
+								"physicalType": "String"
+							}
+						},
+						{
+							"source": {
+								"name": "Mileage",
+								"type": "String",
+								"physicalType": "String"
+							},
+							"sink": {
+								"name": "Mileage",
+								"type": "String",
+								"physicalType": "String"
+							}
+						},
+						{
+							"source": {
+								"name": "Model Price",
+								"type": "String",
+								"physicalType": "String"
+							},
+							"sink": {
+								"name": "Model Price",
+								"type": "String",
+								"physicalType": "String"
+							}
+						},
+						{
+							"source": {
+								"name": "Dealer location",
+								"type": "String",
+								"physicalType": "String"
+							},
+							"sink": {
+								"name": "Dealer location",
+								"type": "String",
+								"physicalType": "String"
+							}
+						},
+						{
+							"source": {
+								"name": "Region",
+								"type": "String",
+								"physicalType": "String"
+							},
+							"sink": {
+								"name": "Region",
+								"type": "String",
+								"physicalType": "String"
+							}
+						}
+					],
+					"typeConversion": true,
+					"typeConversionSettings": {
+						"allowDataTruncation": true,
+						"treatBooleanAsNumber": false
+					}
+				}
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-06-22T05:20:54Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

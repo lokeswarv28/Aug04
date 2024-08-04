@@ -1,0 +1,9 @@
+{
+	"name": "adftraininguks",
+	"location": "uksouth",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "5c892197-c2b7-495f-88f8-8c511dce1e64",
+		"tenantId": "1bac8c5c-a438-4705-9410-2198e8f32156"
+	}
+}

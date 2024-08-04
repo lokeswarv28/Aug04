@@ -1,0 +1,172 @@
+{
+	"name": "PL_JSON_TABLE",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "JsonSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "JsonReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "Json4_pat",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": true
+				}
+			},
+			{
+				"name": "set_ids",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "user_id",
+					"value": {
+						"value": "@activity('Lookup1').output.firstRow.business_discovery.id",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "foreach_data",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "set_ids",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup1').output.firstRow.business_discovery.media.data",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Stored procedure1",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[sp_testing]",
+								"storedProcedureParameters": {
+									"caption": {
+										"value": {
+											"value": "@if(contains(item(), 'caption'),item().caption ,'no caption' )",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"comment_count": {
+										"value": {
+											"value": "@item().comments_count",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"likes_count": {
+										"value": {
+											"value": "@item().like_count",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"media_type": {
+										"value": {
+											"value": "@item().media_type",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"media_url": {
+										"value": {
+											"value": "@if(contains(item(), 'media_url'), item().media_url, 'unkown')\n",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"post_id": {
+										"value": {
+											"value": "@item().id",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"posted_time": {
+										"value": {
+											"value": "@item().timestamp",
+											"type": "Expression"
+										},
+										"type": "DateTime"
+									},
+									"user_id": {
+										"value": {
+											"value": "@variables('user_id')",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AzureSqlDatabase14",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"user_id": {
+				"type": "String"
+			},
+			"testing": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-07-14T06:32:34Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

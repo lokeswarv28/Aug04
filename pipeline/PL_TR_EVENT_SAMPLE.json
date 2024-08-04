@@ -1,0 +1,19 @@
+{
+	"name": "PL_TR_EVENT_SAMPLE",
+	"properties": {
+		"activities": [
+			{
+				"name": "Wait1",
+				"type": "Wait",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"waitTimeInSeconds": 1
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2024-08-03T05:04:45Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

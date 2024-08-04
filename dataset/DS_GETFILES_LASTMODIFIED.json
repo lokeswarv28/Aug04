@@ -1,0 +1,98 @@
+{
+	"name": "DS_GETFILES_LASTMODIFIED",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADLS_ADLSTRAINIG",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"PARA_FILENAMES": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().PARA_FILENAMES",
+					"type": "Expression"
+				},
+				"folderPath": "csv",
+				"fileSystem": "src"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Brand",
+				"type": "String"
+			},
+			{
+				"name": "Model",
+				"type": "String"
+			},
+			{
+				"name": "Body Type",
+				"type": "String"
+			},
+			{
+				"name": "FUEL TYPE",
+				"type": "String"
+			},
+			{
+				"name": "Mileage",
+				"type": "String"
+			},
+			{
+				"name": "ENGINE",
+				"type": "String"
+			},
+			{
+				"name": "TRANSMISSION",
+				"type": "String"
+			},
+			{
+				"name": "Price range",
+				"type": "String"
+			},
+			{
+				"name": "Fuel Capacity (L)",
+				"type": "String"
+			},
+			{
+				"name": "Seating Capacity",
+				"type": "String"
+			},
+			{
+				"name": "Top_Speed in Km/h",
+				"type": "String"
+			},
+			{
+				"name": "No Of Cylinders",
+				"type": "String"
+			},
+			{
+				"name": "Year Of Sale",
+				"type": "String"
+			},
+			{
+				"name": "Month Of Sale ",
+				"type": "String"
+			},
+			{
+				"name": "Country",
+				"type": "String"
+			},
+			{
+				"name": "City",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

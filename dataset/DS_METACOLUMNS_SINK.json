@@ -1,0 +1,62 @@
+{
+	"name": "DS_METACOLUMNS_SINK",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADLS_ADLSTRAINIG",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FILENAMEE": {
+				"type": "string",
+				"defaultValue": "2_wheels_mapping.csv"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().FILENAMEE",
+					"type": "Expression"
+				},
+				"fileSystem": "raw"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "id",
+				"type": "String"
+			},
+			{
+				"name": "storagacc",
+				"type": "String"
+			},
+			{
+				"name": "container",
+				"type": "String"
+			},
+			{
+				"name": "filename",
+				"type": "String"
+			},
+			{
+				"name": "destcontainer",
+				"type": "String"
+			},
+			{
+				"name": "destinationfolder",
+				"type": "String"
+			},
+			{
+				"name": "destinationfilename",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

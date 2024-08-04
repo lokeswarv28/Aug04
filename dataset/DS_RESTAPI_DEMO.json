@@ -1,0 +1,24 @@
+{
+	"name": "DS_RESTAPI_DEMO",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_RESTAPI",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"ROUTER": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@dataset().ROUTER",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

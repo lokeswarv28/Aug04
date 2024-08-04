@@ -1,0 +1,60 @@
+{
+	"name": "PL_EMAILERROR",
+	"properties": {
+		"activities": [
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "email",
+					"value": {
+						"value": "@int('email')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ACT_GEN_WEB_EMAIL",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"url": "https://prod-21.uksouth.logic.azure.com:443/workflows/57bc1a68e3fd4960841e79515fe6fd8c/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UepypHMUoZYkVkMxv5Lcb4o0YzJg9Lq62bW1eV1cyUQ",
+					"body": {
+						"value": "{\n    'PipelineName' : '@{pipeline().Pipeline}',\n    'DatafactoryName' : '@{pipeline().DataFactory}',\n    'RunId' : '@{pipeline().RunId}'\n}",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"email": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2024-06-23T05:04:03Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

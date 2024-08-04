@@ -1,0 +1,79 @@
+{
+	"name": "DS_ADLS_SINK_EXCEL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADLS_ADLSTRAINIG",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"para_dir": {
+				"type": "string"
+			},
+			"para_file": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "SINK"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@concat(dataset().para_file, '_', utcNow('yyyyMMdd HH:mm'), '.csv')",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().para_dir",
+					"type": "Expression"
+				},
+				"fileSystem": "raw"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Education_Level",
+				"type": "String"
+			},
+			{
+				"name": "Line_Number",
+				"type": "String"
+			},
+			{
+				"name": "Employed",
+				"type": "String"
+			},
+			{
+				"name": "Unemployed",
+				"type": "String"
+			},
+			{
+				"name": "Industry",
+				"type": "String"
+			},
+			{
+				"name": "Gender",
+				"type": "String"
+			},
+			{
+				"name": "Date_Inserted",
+				"type": "String"
+			},
+			{
+				"name": "dense_rank",
+				"type": "String"
+			},
+			{
+				"name": "filepath",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

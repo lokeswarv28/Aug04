@@ -1,0 +1,19 @@
+{
+	"name": "PL_SCHEDULE_dEMO",
+	"properties": {
+		"activities": [
+			{
+				"name": "Wait1_schedule",
+				"type": "Wait",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"waitTimeInSeconds": 1
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2024-08-03T05:53:28Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

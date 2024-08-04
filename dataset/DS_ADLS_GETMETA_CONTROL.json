@@ -1,0 +1,45 @@
+{
+	"name": "DS_ADLS_GETMETA_CONTROL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADLS_ADLSTRAINIG",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"para_container": {
+				"type": "string"
+			},
+			"para_folder": {
+				"type": "string"
+			},
+			"para_filename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().para_filename",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().para_folder",
+					"type": "Expression"
+				},
+				"fileSystem": {
+					"value": "@dataset().para_container",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
