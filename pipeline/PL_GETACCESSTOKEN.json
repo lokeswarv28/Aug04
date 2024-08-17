@@ -194,6 +194,54 @@
 						"type": "Expression"
 					}
 				}
+			},
+			{
+				"name": "ACT_GEN_SETACCESSTOKEN",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "ACT_GEN_WEB_GETACCESSTOKEN",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "accesstoken",
+					"value": {
+						"value": "@activity('ACT_GEN_WEB_GETACCESSTOKEN').output.access_token",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ACT_GEN_SETREFRESHTOKEN",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "ACT_GEN_WEB_GETACCESSTOKEN",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "refreshtoken",
+					"value": {
+						"value": "@activity('ACT_GEN_WEB_GETACCESSTOKEN').output.refresh_token",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"parameters": {
@@ -210,6 +258,12 @@
 				"type": "String"
 			},
 			"code": {
+				"type": "String"
+			},
+			"accesstoken": {
+				"type": "String"
+			},
+			"refreshtoken": {
 				"type": "String"
 			}
 		},
