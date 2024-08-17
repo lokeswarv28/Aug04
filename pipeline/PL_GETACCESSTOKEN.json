@@ -75,30 +75,6 @@
 				}
 			},
 			{
-				"name": "ACT_SET_CLIENTID_copy1",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "ACT_WEB_CLIENT_SECRET",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"secureOutput": true,
-					"secureInput": true
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "clientsecret",
-					"value": {
-						"value": "@activity('ACT_WEB_CLIENT_SECRET').output.value",
-						"type": "Expression"
-					}
-				}
-			},
-			{
 				"name": "ACT_GEN_LKP_CODE",
 				"type": "Lookup",
 				"dependsOn": [],
@@ -163,13 +139,13 @@
 						]
 					},
 					{
-						"activity": "ACT_SET_CLIENTID_copy1",
+						"activity": "Set variable1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
 					},
 					{
-						"activity": "Set variable1",
+						"activity": "ACT_SET_CLIENTID_copy1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -310,6 +286,30 @@
 					"authentication": {
 						"type": "MSI",
 						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "ACT_SET_CLIENTID_copy1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "ACT_WEB_CLIENT_SECRET",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "clientsecret",
+					"value": {
+						"value": "@activity('ACT_WEB_CLIENT_SECRET').output.value",
+						"type": "Expression"
 					}
 				}
 			}

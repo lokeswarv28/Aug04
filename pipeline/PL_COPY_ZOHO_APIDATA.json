@@ -1,0 +1,76 @@
+{
+	"name": "PL_COPY_ZOHO_APIDATA",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"paginationRules": {
+							"supportRFC5988": "true"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_REST_ZOHO",
+						"type": "DatasetReference",
+						"parameters": {
+							"base_url": "https://people.zoho.com/people/api/",
+							"relative_url": "forms/employee/getRecords?sIndex=1&limit=100"
+						}
+					}
+				]
+			},
+			{
+				"name": "ACT_GEN_WEB_RETRIVE_ACESSTOKEN",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "@{pipeline().parameters.para_kvurl}accesstoken?api-version=7.0",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"para_kvurl": {
+				"type": "string",
+				"defaultValue": "https://kvtestinh14.vault.azure.net/secrets/"
+			}
+		},
+		"folder": {
+			"name": "zoho"
+		},
+		"annotations": []
+	}
+}
