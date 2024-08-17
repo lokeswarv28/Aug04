@@ -1,0 +1,18 @@
+{
+	"name": "Tr_event_zoho",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/raw/blobs/Zoho_people_code",
+			"blobPathEndsWith": ".csv",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/f40f180f-6064-493e-a43d-a9acbdf03c30/resourceGroups/rgtraininguks/providers/Microsoft.Storage/storageAccounts/adlstraininggen2",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}
