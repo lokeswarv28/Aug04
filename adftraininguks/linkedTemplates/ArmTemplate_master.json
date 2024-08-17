@@ -71,6 +71,10 @@
 			"type": "string",
 			"defaultValue": "/subscriptions/f40f180f-6064-493e-a43d-a9acbdf03c30/resourceGroups/rgtraininguks/providers/Microsoft.Storage/storageAccounts/adlstraininggen2"
 		},
+		"Tr_event_zoho_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/f40f180f-6064-493e-a43d-a9acbdf03c30/resourceGroups/rgtraininguks/providers/Microsoft.Storage/storageAccounts/adlstraininggen2"
+		},
 		"TR_TUMBLING_SALES_properties_pipeline_parameters_para_starttime": {
 			"type": "string",
 			"defaultValue": "@trigger().outputs.windowStartTime"
@@ -231,6 +235,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"Tr_event_zoho_properties_typeProperties_scope": {
+						"value": "[parameters('Tr_event_zoho_properties_typeProperties_scope')]"
 					},
 					"TR_TUMBLING_SALES_properties_pipeline_parameters_para_starttime": {
 						"value": "[parameters('TR_TUMBLING_SALES_properties_pipeline_parameters_para_starttime')]"

@@ -71,6 +71,10 @@
 			"type": "string",
 			"defaultValue": "/subscriptions/f40f180f-6064-493e-a43d-a9acbdf03c30/resourceGroups/rgtraininguks/providers/Microsoft.Storage/storageAccounts/adlstraininggen2"
 		},
+		"Tr_event_zoho_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/f40f180f-6064-493e-a43d-a9acbdf03c30/resourceGroups/rgtraininguks/providers/Microsoft.Storage/storageAccounts/adlstraininggen2"
+		},
 		"TR_TUMBLING_SALES_properties_pipeline_parameters_para_starttime": {
 			"type": "string",
 			"defaultValue": "@trigger().outputs.windowStartTime"
@@ -1985,6 +1989,238 @@
 				"lastPublishTime": "2024-05-26T05:20:32Z"
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_GETACCESSTOKEN')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ACT_WEB_CLIENT_ID",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.para_kvurl}clientid?api-version=7.0",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "ACT_SET_CLIENTID",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "ACT_WEB_CLIENT_ID",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "CLIENTID",
+							"value": {
+								"value": "@activity('ACT_WEB_CLIENT_ID').output.value",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "ACT_WEB_CLIENT_SECRET",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": true,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.para_kvurl}clientsecret?api-version=7.0",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "ACT_SET_CLIENTID_copy1",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "ACT_WEB_CLIENT_SECRET",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "clientsecret",
+							"value": {
+								"value": "@activity('ACT_WEB_CLIENT_SECRET').output.value",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "ACT_GEN_LKP_CODE",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "zoho_code",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "ACT_GEN_LKP_CODE",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "code",
+							"value": {
+								"value": "@activity('ACT_GEN_LKP_CODE').output.firstRow.code_outh",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "ACT_GEN_WEB_GETACCESSTOKEN",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "ACT_SET_CLIENTID",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "ACT_SET_CLIENTID_copy1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Set variable1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "POST",
+							"headers": {
+								"ContentType": "application/x-www-form-urlencoded"
+							},
+							"url": "https://accounts.zoho.in/oauth/v2/token?",
+							"body": {
+								"value": "@concat('client_id=',variables('CLIENTID'), '&client_secret=',variables('clientsecret'), '&grant_type=authorization_code' , '&code=', variables('code'))",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"para_kvurl": {
+						"type": "string",
+						"defaultValue": "https://kvtestinh14.vault.azure.net/secrets/"
+					}
+				},
+				"variables": {
+					"CLIENTID": {
+						"type": "String"
+					},
+					"clientsecret": {
+						"type": "String"
+					},
+					"code": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "zoho"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/zoho_code')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/PL_GETLISTOFFILES_MODIFIEDDATES')]",
@@ -6983,6 +7219,55 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/zoho_code')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_ADLS_ADLSTRAINIG",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Zoho_people_code.csv",
+						"fileSystem": "raw"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Code_outh",
+						"type": "String"
+					},
+					{
+						"name": "Prop_1",
+						"type": "String"
+					},
+					{
+						"name": "Prop_2",
+						"type": "String"
+					},
+					{
+						"name": "Prop_3",
+						"type": "String"
+					},
+					{
+						"name": "Prop_4",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_ADLS_ADLSTRAINIG')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureKeyVault1new')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -7161,6 +7446,37 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/PL_TR_EVENT_SAMPLE')]",
 				"[concat(variables('factoryId'), '/pipelines/PL_3')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Tr_event_zoho')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "PL_GETACCESSTOKEN",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/raw/blobs/Zoho_people_code",
+					"blobPathEndsWith": ".csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('Tr_event_zoho_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/PL_GETACCESSTOKEN')]"
 			]
 		},
 		{
