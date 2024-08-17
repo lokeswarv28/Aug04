@@ -57,11 +57,19 @@
 		},
 		"LS_AzureKeyVault_properties_typeProperties_baseUrl": {
 			"type": "string",
-			"defaultValue": "https://kvtraining14.vault.azure.net/"
+			"defaultValue": "https://kvtestinh14.vault.azure.net/"
 		},
 		"LS_RESTAPI_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://dummy.restapiexample.com/api/v1/"
+		},
+		"LS_ZOHO_PEOPLE_API_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "@{linkedService().Base_url}"
+		},
+		"LS_ZOHO_PEOPLE_API_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "1000.HF4LM059JMMKPUJ1VKFDLG1O0C4D8E"
 		},
 		"TR_EVENT_SAMPLE_properties_typeProperties_scope": {
 			"type": "string",
@@ -212,6 +220,12 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"LS_ZOHO_PEOPLE_API_properties_typeProperties_url": {
+						"value": "[parameters('LS_ZOHO_PEOPLE_API_properties_typeProperties_url')]"
+					},
+					"LS_ZOHO_PEOPLE_API_properties_typeProperties_userName": {
+						"value": "[parameters('LS_ZOHO_PEOPLE_API_properties_typeProperties_userName')]"
 					},
 					"TR_EVENT_SAMPLE2_properties_typeProperties_scope": {
 						"value": "[parameters('TR_EVENT_SAMPLE2_properties_typeProperties_scope')]"

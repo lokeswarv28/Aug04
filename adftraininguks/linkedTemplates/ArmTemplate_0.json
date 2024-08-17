@@ -57,7 +57,7 @@
 		},
 		"LS_AzureKeyVault_properties_typeProperties_baseUrl": {
 			"type": "string",
-			"defaultValue": "https://kvtraining14.vault.azure.net/"
+			"defaultValue": "https://kvtestinh14.vault.azure.net/"
 		}
 	},
 	"variables": {

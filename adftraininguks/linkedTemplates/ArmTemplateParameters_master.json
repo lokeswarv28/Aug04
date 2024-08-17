@@ -42,10 +42,16 @@
 			"value": "user"
 		},
 		"LS_AzureKeyVault_properties_typeProperties_baseUrl": {
-			"value": "https://kvtraining14.vault.azure.net/"
+			"value": "https://kvtestinh14.vault.azure.net/"
 		},
 		"LS_RESTAPI_properties_typeProperties_url": {
 			"value": "https://dummy.restapiexample.com/api/v1/"
+		},
+		"LS_ZOHO_PEOPLE_API_properties_typeProperties_url": {
+			"value": "@{linkedService().Base_url}"
+		},
+		"LS_ZOHO_PEOPLE_API_properties_typeProperties_userName": {
+			"value": "1000.HF4LM059JMMKPUJ1VKFDLG1O0C4D8E"
 		},
 		"TR_EVENT_SAMPLE_properties_typeProperties_scope": {
 			"value": "/subscriptions/f40f180f-6064-493e-a43d-a9acbdf03c30/resourceGroups/rgtraininguks/providers/Microsoft.Storage/storageAccounts/adlstraininggen2"

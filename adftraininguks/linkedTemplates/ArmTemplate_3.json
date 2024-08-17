@@ -7,6 +7,14 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "adftraininguks"
 		},
+		"LS_ZOHO_PEOPLE_API_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "@{linkedService().Base_url}"
+		},
+		"LS_ZOHO_PEOPLE_API_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "1000.HF4LM059JMMKPUJ1VKFDLG1O0C4D8E"
+		},
 		"TR_EVENT_SAMPLE2_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/f40f180f-6064-493e-a43d-a9acbdf03c30/resourceGroups/rgtraininguks/providers/Microsoft.Storage/storageAccounts/adlstraininggen2"
@@ -16,6 +24,44 @@
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Excel1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_ADLS_ADLSTRAINIG",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"para_sheetName": {
+						"type": "string"
+					},
+					"para_filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Excel",
+				"typeProperties": {
+					"sheetName": {
+						"value": "@dataset().para_sheetName",
+						"type": "Expression"
+					},
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().para_filename",
+							"type": "Expression"
+						},
+						"fileSystem": "src"
+					},
+					"firstRowAsHeader": true
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Json1')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -396,6 +442,35 @@
 						"type": "String"
 					}
 				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_ZOHO_PEOPLE_API')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"Base_url": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('LS_ZOHO_PEOPLE_API_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Basic",
+					"userName": "[parameters('LS_ZOHO_PEOPLE_API_properties_typeProperties_userName')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LS_AzureKeyVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "clientsecret"
+					}
+				}
 			},
 			"dependsOn": []
 		},
@@ -2560,246 +2635,6 @@
 				},
 				"annotations": [],
 				"lastPublishTime": "2024-06-02T05:24:35Z"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/PL_GETMETA')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "ACT_GEN_GETMETA",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "DS_ADLS_GETMETA",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"fieldList": [
-								"childItems",
-								"itemName"
-							],
-							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
-								"recursive": true,
-								"modifiedDatetimeEnd": {
-									"value": "@addDays(utcNow(), -6 )",
-									"type": "Expression"
-								},
-								"enablePartitionDiscovery": false
-							},
-							"formatSettings": {
-								"type": "DelimitedTextReadSettings"
-							}
-						}
-					},
-					{
-						"name": "Filter1",
-						"type": "Filter",
-						"dependsOn": [
-							{
-								"activity": "ACT_GEN_GETMETA",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('ACT_GEN_GETMETA').output.childItems",
-								"type": "Expression"
-							},
-							"condition": {
-								"value": "@startswith(item().name, 'C')",
-								"type": "Expression"
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"variables": {
-					"testing": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"lastPublishTime": "2024-06-01T05:21:19Z"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/PL_HISTORICAL')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Lookup1",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "DS_SQL_HISTORICALCONFIG",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "ForEach1",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "Lookup1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('Lookup1').output.value",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "Copy data1",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "AzureSqlSource",
-											"sqlReaderStoredProcedureName": "[[dev].[SprocHistoricalLoad]",
-											"storedProcedureParameters": {
-												"colName": {
-													"type": "String",
-													"value": {
-														"value": "@item().SourceColumnName",
-														"type": "Expression"
-													}
-												},
-												"endDate": {
-													"type": "String",
-													"value": {
-														"value": "@pipeline().parameters.para_endtime",
-														"type": "Expression"
-													}
-												},
-												"startDate": {
-													"type": "String",
-													"value": {
-														"value": "@pipeline().parameters.para_starttime",
-														"type": "Expression"
-													}
-												},
-												"tableName": {
-													"type": "String",
-													"value": {
-														"value": "@item().SourceTableName",
-														"type": "Expression"
-													}
-												}
-											},
-											"queryTimeout": "02:00:00",
-											"partitionOption": "None"
-										},
-										"sink": {
-											"type": "AzureSqlSink",
-											"writeBehavior": "insert",
-											"sqlWriterUseTableLock": false
-										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "DS_SQL_HISTORICALCONFIG",
-											"type": "DatasetReference",
-											"parameters": {}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "DS_SQL_SINK_SALES",
-											"type": "DatasetReference",
-											"parameters": {
-												"tablename": {
-													"value": "@item().TargetTableName",
-													"type": "Expression"
-												},
-												"schema": {
-													"value": "@item().TargetSchema",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"parameters": {
-					"para_starttime": {
-						"type": "string"
-					},
-					"para_endtime": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Historical_Loading"
-				},
-				"annotations": [],
-				"lastPublishTime": "2024-08-04T05:11:59Z"
 			},
 			"dependsOn": []
 		}
