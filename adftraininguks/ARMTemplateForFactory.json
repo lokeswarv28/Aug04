@@ -7830,7 +7830,7 @@
 								"referenceName": "DS_REST_ZOHO",
 								"type": "DatasetReference",
 								"parameters": {
-									"base_url": "https://people.zoho.com/people/api/",
+									"base_url": "https://people.zoho.in/people/api/",
 									"relative_url": "forms/employee/getRecords"
 								}
 							}
