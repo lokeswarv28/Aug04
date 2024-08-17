@@ -242,6 +242,76 @@
 						"type": "Expression"
 					}
 				}
+			},
+			{
+				"name": "ACT_GEN_WEB_UPDATEACCESSTOKEN",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "ACT_GEN_SETACCESSTOKEN",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "PUT",
+					"url": {
+						"value": "@{pipeline().parameters.para_kvurl}accesstoken?api-version=7.0",
+						"type": "Expression"
+					},
+					"body": {
+						"value": "{\"value\" : \"@{variables('accesstoken')}\"}",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "ACT_GEN_WEB_UPDATEACCESSTOKEN_copy1",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "ACT_GEN_SETREFRESHTOKEN",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "PUT",
+					"url": {
+						"value": "@{pipeline().parameters.para_kvurl}refreshtoken?api-version=7.0",
+						"type": "Expression"
+					},
+					"body": {
+						"value": "{\"value\" : \"@{variables('refreshtoken')}\"}",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
 			}
 		],
 		"parameters": {
