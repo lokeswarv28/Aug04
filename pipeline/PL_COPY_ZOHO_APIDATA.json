@@ -29,7 +29,7 @@
 						"requestMethod": "GET",
 						"additionalHeaders": {
 							"Authorization": {
-								"value": "@variables('acc_token')",
+								"value": "1000.0c355a684bfca3adac0607654e947593.c6fb1ff0513df19b59d6c5157b4652d3",
 								"type": "Expression"
 							}
 						},
