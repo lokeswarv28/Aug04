@@ -1289,6 +1289,151 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/PL_HISTORICAL')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_COPY_ZOHO_APIDATA')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Set variable1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"additionalHeaders": {
+									"Authorization": {
+										"value": "@variables('acc_token')",
+										"type": "Expression"
+									}
+								},
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_REST_ZOHO",
+								"type": "DatasetReference",
+								"parameters": {
+									"base_url": "https://people.zoho.com/people/api/",
+									"relative_url": "forms/employee/getRecords"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Json4_zoho",
+								"type": "DatasetReference",
+								"parameters": {
+									"para_filename": "data_zoho.json"
+								}
+							}
+						]
+					},
+					{
+						"name": "ACT_GEN_WEB_RETRIVE_ACESSTOKEN",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.para_kvurl}accesstoken?api-version=7.0",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "ACT_GEN_WEB_RETRIVE_ACESSTOKEN",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "acc_token",
+							"value": {
+								"value": "@activity('ACT_GEN_WEB_RETRIVE_ACESSTOKEN').output.value",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"para_kvurl": {
+						"type": "string",
+						"defaultValue": "https://kvtestinh14.vault.azure.net/secrets/"
+					}
+				},
+				"variables": {
+					"acc_token": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "zoho"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_REST_ZOHO')]"
+			]
 		}
 	]
 }

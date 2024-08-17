@@ -2079,30 +2079,6 @@
 						}
 					},
 					{
-						"name": "ACT_SET_CLIENTID_copy1",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "ACT_WEB_CLIENT_SECRET",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"secureOutput": true,
-							"secureInput": true
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "clientsecret",
-							"value": {
-								"value": "@activity('ACT_WEB_CLIENT_SECRET').output.value",
-								"type": "Expression"
-							}
-						}
-					},
-					{
 						"name": "ACT_GEN_LKP_CODE",
 						"type": "Lookup",
 						"dependsOn": [],
@@ -2168,13 +2144,13 @@
 								]
 							},
 							{
-								"activity": "ACT_SET_CLIENTID_copy1",
+								"activity": "Set variable1",
 								"dependencyConditions": [
 									"Succeeded"
 								]
 							},
 							{
-								"activity": "Set variable1",
+								"activity": "ACT_SET_CLIENTID_copy1",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -2319,6 +2295,30 @@
 								"resource": "https://vault.azure.net"
 							}
 						}
+					},
+					{
+						"name": "ACT_SET_CLIENTID_copy1",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "ACT_WEB_CLIENT_SECRET",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": true,
+							"secureInput": true
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "clientsecret",
+							"value": {
+								"value": "@activity('ACT_WEB_CLIENT_SECRET').output.value",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"policy": {
@@ -2344,6 +2344,9 @@
 						"type": "String"
 					},
 					"refreshtoken": {
+						"type": "String"
+					},
+					"acc_token": {
 						"type": "String"
 					}
 				},
@@ -7771,19 +7774,294 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pipeline3')]",
+			"name": "[concat(parameters('factoryName'), '/PL_COPY_ZOHO_APIDATA')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Set variable1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"additionalHeaders": {
+									"Authorization": {
+										"value": "@variables('acc_token')",
+										"type": "Expression"
+									}
+								},
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_REST_ZOHO",
+								"type": "DatasetReference",
+								"parameters": {
+									"base_url": "https://people.zoho.com/people/api/",
+									"relative_url": "forms/employee/getRecords"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Json4_zoho",
+								"type": "DatasetReference",
+								"parameters": {
+									"para_filename": "data_zoho.json"
+								}
+							}
+						]
+					},
+					{
+						"name": "ACT_GEN_WEB_RETRIVE_ACESSTOKEN",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "GET",
+							"headers": {},
+							"url": {
+								"value": "@{pipeline().parameters.para_kvurl}accesstoken?api-version=7.0",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "ACT_GEN_WEB_RETRIVE_ACESSTOKEN",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "acc_token",
+							"value": {
+								"value": "@activity('ACT_GEN_WEB_RETRIVE_ACESSTOKEN').output.value",
+								"type": "Expression"
+							}
+						}
+					}
+				],
 				"policy": {
 					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"para_kvurl": {
+						"type": "string",
+						"defaultValue": "https://kvtestinh14.vault.azure.net/secrets/"
+					}
+				},
+				"variables": {
+					"acc_token": {
+						"type": "String"
+					}
 				},
 				"folder": {
 					"name": "zoho"
 				},
 				"annotations": []
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_REST_ZOHO')]",
+				"[concat(variables('factoryId'), '/datasets/Json4_zoho')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Json4_zoho')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_ADLS_ADLSTRAINIG",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"para_filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().para_filename",
+							"type": "Expression"
+						},
+						"fileSystem": "raw"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"status": {
+							"type": "string"
+						},
+						"data": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"id": {
+										"type": "integer"
+									},
+									"employee_name": {
+										"type": "string"
+									},
+									"employee_salary": {
+										"type": "integer"
+									},
+									"employee_age": {
+										"type": "integer"
+									},
+									"profile_image": {
+										"type": "string"
+									}
+								}
+							}
+						},
+						"message": {
+							"type": "string"
+						},
+						"business_discovery": {
+							"type": "object",
+							"properties": {
+								"id": {
+									"type": "string"
+								},
+								"name": {
+									"type": "string"
+								},
+								"username": {
+									"type": "string"
+								},
+								"website": {
+									"type": "string"
+								},
+								"profile_picture_url": {
+									"type": "string"
+								},
+								"biography": {
+									"type": "string"
+								},
+								"followers_count": {
+									"type": "integer"
+								},
+								"media_count": {
+									"type": "integer"
+								},
+								"media": {
+									"type": "object",
+									"properties": {
+										"data": {
+											"type": "array",
+											"items": {
+												"type": "object",
+												"properties": {
+													"like_count": {
+														"type": "integer"
+													},
+													"media_url": {
+														"type": "string"
+													},
+													"caption": {
+														"type": "string"
+													},
+													"comments_count": {
+														"type": "integer"
+													},
+													"timestamp": {
+														"type": "string"
+													},
+													"media_type": {
+														"type": "string"
+													},
+													"id": {
+														"type": "string"
+													}
+												}
+											}
+										},
+										"paging": {
+											"type": "object",
+											"properties": {
+												"cursors": {
+													"type": "object",
+													"properties": {
+														"after": {
+															"type": "string"
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						},
+						"id": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_ADLS_ADLSTRAINIG')]"
+			]
 		}
 	]
 }
