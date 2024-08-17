@@ -1227,70 +1227,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Tr_event_zoho')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "PL_GETACCESSTOKEN",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/raw/blobs/Zoho_people_code",
-					"blobPathEndsWith": ".csv",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('Tr_event_zoho_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/TR_TUMBLING_SALES')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipeline": {
-					"pipelineReference": {
-						"referenceName": "PL_HISTORICAL",
-						"type": "PipelineReference"
-					},
-					"parameters": {
-						"para_starttime": "[parameters('TR_TUMBLING_SALES_properties_pipeline_parameters_para_starttime')]",
-						"para_endtime": "[parameters('TR_TUMBLING_SALES_properties_pipeline_parameters_para_endtime')]"
-					}
-				},
-				"type": "TumblingWindowTrigger",
-				"typeProperties": {
-					"frequency": "Hour",
-					"interval": 24,
-					"startTime": "2023-12-20T05:15:00Z",
-					"endTime": "2023-12-27T05:15:00Z",
-					"delay": "00:00:00",
-					"maxConcurrency": 1,
-					"retryPolicy": {
-						"intervalInSeconds": 30
-					},
-					"dependsOn": []
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/PL_HISTORICAL')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/PL_COPY_ZOHO_APIDATA')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1323,7 +1259,7 @@
 								"requestMethod": "GET",
 								"additionalHeaders": {
 									"Authorization": {
-										"value": "@variables('acc_token')",
+										"value": "1000.0c355a684bfca3adac0607654e947593.c6fb1ff0513df19b59d6c5157b4652d3",
 										"type": "Expression"
 									}
 								},
@@ -1433,6 +1369,70 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_REST_ZOHO')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Tr_event_zoho')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "PL_GETACCESSTOKEN",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/raw/blobs/Zoho_people_code",
+					"blobPathEndsWith": ".csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('Tr_event_zoho_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TR_TUMBLING_SALES')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipeline": {
+					"pipelineReference": {
+						"referenceName": "PL_HISTORICAL",
+						"type": "PipelineReference"
+					},
+					"parameters": {
+						"para_starttime": "[parameters('TR_TUMBLING_SALES_properties_pipeline_parameters_para_starttime')]",
+						"para_endtime": "[parameters('TR_TUMBLING_SALES_properties_pipeline_parameters_para_endtime')]"
+					}
+				},
+				"type": "TumblingWindowTrigger",
+				"typeProperties": {
+					"frequency": "Hour",
+					"interval": 24,
+					"startTime": "2023-12-20T05:15:00Z",
+					"endTime": "2023-12-27T05:15:00Z",
+					"delay": "00:00:00",
+					"maxConcurrency": 1,
+					"retryPolicy": {
+						"intervalInSeconds": 30
+					},
+					"dependsOn": []
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/PL_HISTORICAL')]"
 			]
 		}
 	]
