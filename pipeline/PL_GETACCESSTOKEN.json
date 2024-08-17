@@ -151,6 +151,49 @@
 						"type": "Expression"
 					}
 				}
+			},
+			{
+				"name": "ACT_GEN_WEB_GETACCESSTOKEN",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "ACT_SET_CLIENTID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "ACT_SET_CLIENTID_copy1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "POST",
+					"headers": {
+						"ContentType": "application/x-www-form-urlencoded"
+					},
+					"url": "https://accounts.zoho.in/oauth/v2/token?",
+					"body": {
+						"value": "@concat('client_id=',variables('CLIENTID'), '&client_secret=',variables('clientsecret'), '&grant_type=authorization_code' , '&code=', variables('code'))",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"parameters": {
