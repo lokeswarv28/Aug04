@@ -2238,7 +2238,7 @@
 						"typeProperties": {
 							"method": "POST",
 							"headers": {
-								"ContentType": "application/x-www-form-urlencoded"
+								"Content-Type": "application/x-www-form-urlencoded"
 							},
 							"url": "https://accounts.zoho.in/oauth/v2/token?",
 							"body": {
