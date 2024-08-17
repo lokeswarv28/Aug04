@@ -54,7 +54,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"base_url": "https://people.zoho.com/people/api/",
-							"relative_url": "forms/employee/getRecords?sIndex=1&limit=100"
+							"relative_url": "forms/employee/getRecords"
 						}
 					}
 				],
