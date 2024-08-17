@@ -41,8 +41,6 @@
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [
-					"TR_SAMPLE_Testing",
-					"TR_SAMPLE_Testing",
 					"TR_SAMPLE_Testing"
 				],
 				"runtimeState": "Stopped",
