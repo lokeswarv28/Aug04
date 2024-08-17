@@ -127,6 +127,30 @@
 						"type": "DatasetReference"
 					}
 				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "ACT_GEN_LKP_CODE",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "code",
+					"value": {
+						"value": "@activity('ACT_GEN_LKP_CODE').output.firstRow.code_outh",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"parameters": {
@@ -140,6 +164,9 @@
 				"type": "String"
 			},
 			"clientsecret": {
+				"type": "String"
+			},
+			"code": {
 				"type": "String"
 			}
 		},
