@@ -5,7 +5,14 @@
 			{
 				"name": "Copy data1",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -20,8 +27,23 @@
 						"httpRequestTimeout": "00:01:40",
 						"requestInterval": "00.00:00:00.010",
 						"requestMethod": "GET",
+						"additionalHeaders": {
+							"Authorization": {
+								"value": "@variables('acc_token')",
+								"type": "Expression"
+							}
+						},
 						"paginationRules": {
 							"supportRFC5988": "true"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
 						}
 					},
 					"enableStaging": false
@@ -33,6 +55,15 @@
 						"parameters": {
 							"base_url": "https://people.zoho.com/people/api/",
 							"relative_url": "forms/employee/getRecords?sIndex=1&limit=100"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Json4_zoho",
+						"type": "DatasetReference",
+						"parameters": {
+							"para_filename": "data_zoho.json"
 						}
 					}
 				]
@@ -60,12 +91,41 @@
 						"resource": "https://vault.azure.net"
 					}
 				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "ACT_GEN_WEB_RETRIVE_ACESSTOKEN",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "acc_token",
+					"value": {
+						"value": "@activity('ACT_GEN_WEB_RETRIVE_ACESSTOKEN').output.value",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"parameters": {
 			"para_kvurl": {
 				"type": "string",
 				"defaultValue": "https://kvtestinh14.vault.azure.net/secrets/"
+			}
+		},
+		"variables": {
+			"acc_token": {
+				"type": "String"
 			}
 		},
 		"folder": {

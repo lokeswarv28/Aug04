@@ -1,0 +1,139 @@
+{
+	"name": "Json4_zoho",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADLS_ADLSTRAINIG",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"para_filename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().para_filename",
+					"type": "Expression"
+				},
+				"fileSystem": "raw"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"status": {
+					"type": "string"
+				},
+				"data": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "integer"
+							},
+							"employee_name": {
+								"type": "string"
+							},
+							"employee_salary": {
+								"type": "integer"
+							},
+							"employee_age": {
+								"type": "integer"
+							},
+							"profile_image": {
+								"type": "string"
+							}
+						}
+					}
+				},
+				"message": {
+					"type": "string"
+				},
+				"business_discovery": {
+					"type": "object",
+					"properties": {
+						"id": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						},
+						"username": {
+							"type": "string"
+						},
+						"website": {
+							"type": "string"
+						},
+						"profile_picture_url": {
+							"type": "string"
+						},
+						"biography": {
+							"type": "string"
+						},
+						"followers_count": {
+							"type": "integer"
+						},
+						"media_count": {
+							"type": "integer"
+						},
+						"media": {
+							"type": "object",
+							"properties": {
+								"data": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"like_count": {
+												"type": "integer"
+											},
+											"media_url": {
+												"type": "string"
+											},
+											"caption": {
+												"type": "string"
+											},
+											"comments_count": {
+												"type": "integer"
+											},
+											"timestamp": {
+												"type": "string"
+											},
+											"media_type": {
+												"type": "string"
+											},
+											"id": {
+												"type": "string"
+											}
+										}
+									}
+								},
+								"paging": {
+									"type": "object",
+									"properties": {
+										"cursors": {
+											"type": "object",
+											"properties": {
+												"after": {
+													"type": "string"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"id": {
+					"type": "string"
+				}
+			}
+		}
+	}
+}
