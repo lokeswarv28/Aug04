@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "code_zoho.csv",
+				"fileName": "Zoho_people_code.csv",
 				"fileSystem": "raw"
 			},
 			"columnDelimiter": ",",
