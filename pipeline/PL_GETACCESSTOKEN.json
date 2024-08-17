@@ -10,7 +10,7 @@
 					"timeout": "0.12:00:00",
 					"retry": 0,
 					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
+					"secureOutput": true,
 					"secureInput": false
 				},
 				"userProperties": [],
@@ -25,12 +25,122 @@
 						"resource": "https://vault.azure.net"
 					}
 				}
+			},
+			{
+				"name": "ACT_SET_CLIENTID",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "ACT_WEB_CLIENT_ID",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "CLIENTID",
+					"value": {
+						"value": "@activity('ACT_WEB_CLIENT_ID').output.value",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ACT_WEB_CLIENT_SECRET",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": true,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": {
+						"value": "@{pipeline().parameters.para_kvurl}clientsecret?api-version=7.0",
+						"type": "Expression"
+					},
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "ACT_SET_CLIENTID_copy1",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "ACT_WEB_CLIENT_SECRET",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": true,
+					"secureInput": true
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "clientsecret",
+					"value": {
+						"value": "@activity('ACT_WEB_CLIENT_SECRET').output.value",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ACT_GEN_LKP_CODE",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "zoho_code",
+						"type": "DatasetReference"
+					}
+				}
 			}
 		],
 		"parameters": {
 			"para_kvurl": {
 				"type": "string",
 				"defaultValue": "https://kvtestinh14.vault.azure.net/secrets/"
+			}
+		},
+		"variables": {
+			"CLIENTID": {
+				"type": "String"
+			},
+			"clientsecret": {
+				"type": "String"
 			}
 		},
 		"folder": {
