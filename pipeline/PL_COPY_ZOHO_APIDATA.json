@@ -53,8 +53,6 @@
 			{
 				"name": "Copy data1",
 				"type": "Copy",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Set variable1",
@@ -108,7 +106,7 @@
 								"type": "Expression"
 							},
 							"base_url": {
-								"value": "https://people.zoho.com/people/api/",
+								"value": "https://people.zoho.in/people/api/",
 								"type": "Expression"
 							}
 						}
