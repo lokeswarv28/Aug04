@@ -1,0 +1,32 @@
+{
+	"name": "DS_ZOHO_RESTAPI",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ZOHO_PEOPLE_API",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"Base_url": {
+					"value": "@dataset().base_url",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"relative_url": {
+				"type": "string"
+			},
+			"base_url": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@dataset().relative_url",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	}
+}
