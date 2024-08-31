@@ -1,0 +1,60 @@
+{
+	"name": "DS_ADLS_DF_Tes1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADLS_ADLSTRAINIG",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "2-WheelSales.csv",
+				"fileSystem": "src"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "ID",
+				"type": "String"
+			},
+			{
+				"name": "Schema",
+				"type": "String"
+			},
+			{
+				"name": "TableName",
+				"type": "String"
+			},
+			{
+				"name": "ColumnName",
+				"type": "String"
+			},
+			{
+				"name": "SourceDataType",
+				"type": "String"
+			},
+			{
+				"name": "TargetDataType",
+				"type": "String"
+			},
+			{
+				"name": "FILENAME",
+				"type": "String"
+			},
+			{
+				"name": "FILECOLUMNS",
+				"type": "String"
+			},
+			{
+				"name": "RENAMECOLUMNS",
+				"type": "String"
+			}
+		]
+	}
+}

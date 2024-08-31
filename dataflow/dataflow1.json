@@ -1,0 +1,58 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_ADLS_DF_Tes1",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "select1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          OEM as string,",
+				"          Model as string,",
+				"          Segment as string,",
+				"          Month as string,",
+				"          Year as integer,",
+				"          NoOfSales as integer,",
+				"          EngineCapacity as string,",
+				"          Mileage as string,",
+				"          {Model Price} as string,",
+				"          {Dealer location} as string,",
+				"          Region as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     partitionBy('hash', 3,",
+				"          OEM",
+				"     )) ~> source1",
+				"source1 select(mapColumn(",
+				"          OEM,",
+				"          Model,",
+				"          Segment,",
+				"          Month,",
+				"          Year,",
+				"          NoOfSales,",
+				"          EngineCapacity,",
+				"          Mileage,",
+				"          {Model Price},",
+				"          Region",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1"
+			]
+		}
+	}
+}
