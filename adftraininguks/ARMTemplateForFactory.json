@@ -4619,52 +4619,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pipeline4')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Data flow1",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "dataflow1",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"source1": {},
-									"sink1": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/dataflow1')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/pipeline4_copydata_dummy')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -4976,6 +4930,71 @@
 					},
 					{
 						"name": "destinationfilename",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_ADLS_ADLSTRAINIG')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_ADLS_DF_Tes1')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_ADLS_ADLSTRAINIG",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "2-WheelSales.csv",
+						"fileSystem": "src"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "ID",
+						"type": "String"
+					},
+					{
+						"name": "Schema",
+						"type": "String"
+					},
+					{
+						"name": "TableName",
+						"type": "String"
+					},
+					{
+						"name": "ColumnName",
+						"type": "String"
+					},
+					{
+						"name": "SourceDataType",
+						"type": "String"
+					},
+					{
+						"name": "TargetDataType",
+						"type": "String"
+					},
+					{
+						"name": "FILENAME",
+						"type": "String"
+					},
+					{
+						"name": "FILECOLUMNS",
+						"type": "String"
+					},
+					{
+						"name": "RENAMECOLUMNS",
 						"type": "String"
 					}
 				]
@@ -8159,7 +8178,7 @@
 					"sources": [
 						{
 							"dataset": {
-								"referenceName": "DelimitedText1",
+								"referenceName": "DS_ADLS_DF_Tes1",
 								"type": "DatasetReference"
 							},
 							"name": "source1"
@@ -8174,15 +8193,19 @@
 							"name": "sink1"
 						}
 					],
-					"transformations": [],
+					"transformations": [
+						{
+							"name": "select1"
+						}
+					],
 					"scriptLines": [
 						"source(output(",
 						"          OEM as string,",
 						"          Model as string,",
 						"          Segment as string,",
 						"          Month as string,",
-						"          Year as string,",
-						"          NoOfSales as string,",
+						"          Year as integer,",
+						"          NoOfSales as integer,",
 						"          EngineCapacity as string,",
 						"          Mileage as string,",
 						"          {Model Price} as string,",
@@ -8192,33 +8215,80 @@
 						"     allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     ignoreNoFilesFound: false,",
-						"     partitionBy('hash', 2,",
+						"     partitionBy('hash', 3,",
 						"          OEM",
 						"     )) ~> source1",
-						"source1 sink(allowSchemaDrift: true,",
+						"source1 select(mapColumn(",
+						"          OEM,",
+						"          Model,",
+						"          Segment,",
+						"          Month,",
+						"          Year,",
+						"          NoOfSales,",
+						"          EngineCapacity,",
+						"          Mileage,",
+						"          {Model Price},",
+						"          Region",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 sink(allowSchemaDrift: true,",
 						"     validateSchema: false,",
 						"     format: 'delimited',",
 						"     fileSystem: 'generic',",
-						"     folderPath: 'test',",
+						"     folderPath: 'test_dataflows',",
+						"     truncate: true,",
 						"     columnDelimiter: ',',",
 						"     escapeChar: '\\\\',",
 						"     quoteChar: '\\\"',",
-						"     columnNamesAsHeader: false,",
+						"     columnNamesAsHeader: true,",
 						"     umask: 0022,",
 						"     preCommands: [],",
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 3,",
-						"          OEM",
-						"     )) ~> sink1"
+						"     skipDuplicateMapOutputs: true) ~> sink1"
 					]
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DelimitedText1')]",
+				"[concat(variables('factoryId'), '/datasets/DS_ADLS_DF_Tes1')]",
 				"[concat(variables('factoryId'), '/linkedServices/LS_ADLS_ADLSTRAINIG')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_DATAFLOWS')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
 		}
 	]
 }
