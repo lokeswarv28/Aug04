@@ -1499,7 +1499,10 @@
 						"     preCommands: [],",
 						"     postCommands: [],",
 						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true) ~> sink1"
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 5,",
+						"          OEM",
+						"     )) ~> sink1"
 					]
 				}
 			},
