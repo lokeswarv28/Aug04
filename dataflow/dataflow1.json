@@ -43,7 +43,7 @@
 				"     validateSchema: false,",
 				"     format: 'delimited',",
 				"     fileSystem: 'generic',",
-				"     folderPath: 'test.csv',",
+				"     folderPath: 'test',",
 				"     columnDelimiter: ',',",
 				"     escapeChar: '\\\\',",
 				"     quoteChar: '\\\"',",
@@ -53,7 +53,7 @@
 				"     postCommands: [],",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 2,",
+				"     partitionBy('hash', 3,",
 				"          OEM",
 				"     )) ~> sink1"
 			]
