@@ -28,7 +28,7 @@
 				"source1 split(dept_id <=10,",
 				"     dept_id>11,",
 				"     dept_id>13,",
-				"     disjoint: false) ~> split1@(case1, case2, case4, case3)"
+				"     disjoint: true) ~> split1@(case1, case2, case4, case3)"
 			]
 		}
 	}
