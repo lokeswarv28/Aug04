@@ -15,19 +15,24 @@
 			"sinks": [],
 			"transformations": [
 				{
-					"name": "split1"
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
 				}
 			],
 			"scriptLines": [
 				"source(output(",
-				"          dept_id as integer",
+				"          PurchaseId as short,",
+				"          PurchaseUnits as string",
 				"     ),",
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source1",
-				"source1 split(dept_id<=10,",
-				"     dept_id <5,",
-				"     disjoint: true) ~> split1@(case1, case2, remaining)"
+				"source1 derive(Start_col = split(PurchaseUnits, '.')) ~> derivedColumn1",
+				"derivedColumn1 derive(Start_col = at(Start_col, 1),",
+				"          end_col = at(Start_col, 3),",
+				"          test = case(PurchaseId <=2, 'Good', case(PurchaseId==4, 'Four', 'Ntg'))) ~> derivedColumn2"
 			]
 		}
 	}

@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "Book1_01.csv",
+				"fileName": "Split Column Range to Rows.csv",
 				"fileSystem": "raw"
 			},
 			"columnDelimiter": ",",
