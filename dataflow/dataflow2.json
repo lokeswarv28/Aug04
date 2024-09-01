@@ -26,7 +26,8 @@
 				"     validateSchema: false,",
 				"     ignoreNoFilesFound: false) ~> source1",
 				"source1 split(dept_id<=10,",
-				"     disjoint: true) ~> split1@(case1, remaining)"
+				"     dept_id <5,",
+				"     disjoint: true) ~> split1@(case1, case2, remaining)"
 			]
 		}
 	}
