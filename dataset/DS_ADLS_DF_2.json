@@ -1,0 +1,28 @@
+{
+	"name": "DS_ADLS_DF_2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADLS_ADLSTRAINIG",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Book1_01.csv",
+				"fileSystem": "raw"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "dept_id",
+				"type": "String"
+			}
+		]
+	}
+}
